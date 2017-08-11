@@ -65,14 +65,17 @@ APP.Main = (function() {
 
     // This seems odd. Surely we could just select the story
     // directly rather than looping through all of them.
-    var storyElements = document.querySelectorAll('.story');
 
-    for (var i = 0; i < storyElements.length; i++) {
+    // var storyElements = document.querySelectorAll('.story');
+    // for (var i = 0; i < storyElements.length; i++) {
+    //   if (storyElements[i].getAttribute('id') === 's-' + key) {
 
-      if (storyElements[i].getAttribute('id') === 's-' + key) {
-
+        //var storyElements = document.querySelectorAll('.story');
         details.time *= 1000;
-        var story = storyElements[i];
+        //var story = storyElements[i];
+        var index = count - storyLoadCount;
+        //console.log("Loading for index " + index);
+        var story = document.querySelectorAll('.story')[index];
         var html = storyTemplate(details);
         story.innerHTML = html;
         story.addEventListener('click', onStoryClick.bind(this, details));
@@ -81,12 +84,12 @@ APP.Main = (function() {
         // Tick down. When zero we can batch in the next load.
         storyLoadCount--;
 
-      }
-    }
+    //   }
+    // }
 
     // Colorize on complete.
-    if (storyLoadCount === 0)
-      colorizeAndScaleStories();
+    // if (storyLoadCount === 0)
+    //   colorizeAndScaleStories();
   }
 
   function onStoryClick(details) {
@@ -177,10 +180,12 @@ APP.Main = (function() {
     document.body.classList.add('details-active');
     storyDetails.style.opacity = 1;
 
+    var storyDetailsPosition = storyDetails.getBoundingClientRect();
+
     function animate () {
 
       // Find out where it currently is.
-      var storyDetailsPosition = storyDetails.getBoundingClientRect();
+      
 
       // Set the left value if we don't have one already.
       if (left === null)
@@ -218,13 +223,15 @@ APP.Main = (function() {
     document.body.classList.remove('details-active');
     storyDetails.style.opacity = 0;
 
+     var mainPosition = main.getBoundingClientRect();
+     var storyDetailsPosition = storyDetails.getBoundingClientRect();
+     var target = mainPosition.width + 100;
+
+
     function animate () {
 
       // Find out where it currently is.
-      var mainPosition = main.getBoundingClientRect();
-      var storyDetailsPosition = storyDetails.getBoundingClientRect();
-      var target = mainPosition.width + 100;
-
+     
       // Now figure out where it needs to go.
       left += (target - storyDetailsPosition.left) * 0.1;
 
@@ -258,30 +265,52 @@ APP.Main = (function() {
 
     // It does seem awfully broad to change all the
     // colors every time!
+    var height = main.offsetHeight;
+    var mainPosition = main.getBoundingClientRect();
+    var documentPosition = document.body.getBoundingClientRect().top;
+
     for (var s = 0; s < storyElements.length; s++) {
 
       var story = storyElements[s];
       var score = story.querySelector('.story__score');
       var title = story.querySelector('.story__title');
 
-      // Base the scale on the y position of the score.
-      var height = main.offsetHeight;
-      var mainPosition = main.getBoundingClientRect();
-      var scoreLocation = score.getBoundingClientRect().top -
-          document.body.getBoundingClientRect().top;
+      // Base the scale on the y position of the score.     
+      var scoreRect =  score.getBoundingClientRect();
+      var scoreLocation = scoreRect.top -
+          documentPosition;
       var scale = Math.min(1, 1 - (0.05 * ((scoreLocation - 170) / height)));
       var opacity = Math.min(1, 1 - (0.5 * ((scoreLocation - 170) / height)));
 
+      // console.log("Before:: score.style.width: " + score.style.width + 
+      //     " score.style.height: " +score.style.height +
+      //     " score.style.lineHeight: " + score.style.lineHeight);
+      
+      
       score.style.width = (scale * 40) + 'px';
-      score.style.height = (scale * 40) + 'px';
-      score.style.lineHeight = (scale * 40) + 'px';
+      //score.style.height = (scale * 40) + 'px';
+      //score.style.lineHeight = (scale * 40) + 'px';
+
+      console.log("After:: score.style.width: " + score.style.width );
+      // console.log("After:: score.style.width: " + score.style.width + 
+      //     " score.style.height: " +score.style.height +
+      //     " score.style.lineHeight: " + score.style.lineHeight);
 
       // Now figure out how wide it is and use that to saturate it.
       scoreLocation = score.getBoundingClientRect();
+      //scoreLocation.width = score.style.width;
+      var diff = scoreRect.width - score.style.width;
+      console.log("Score location :: " + scoreRect.width + " Diff :: " + 
+          diff);
       var saturation = (100 * ((scoreLocation.width - 38) / 2));
+      //var saturation = (100 * ((scoreRect.width - 38) / 2));
 
+      // console.log("Before:: score.style.backgroundColor: " + score.style.backgroundColor 
+      //     + " title.style.opacity: " + title.style.opacity);
       score.style.backgroundColor = 'hsl(42, ' + saturation + '%, 50%)';
       title.style.opacity = opacity;
+      // console.log("After:: score.style.backgroundColor: " + score.style.backgroundColor 
+      //     + " title.style.opacity: " + title.style.opacity);
     }
   }
 
@@ -345,7 +374,6 @@ APP.Main = (function() {
         time: 0
       });
       main.appendChild(story);
-
       APP.Data.getStoryById(stories[i], onStoryData.bind(this, key));
     }
 
