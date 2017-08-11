@@ -97,8 +97,9 @@ APP.Main = (function() {
     var storyDetails = $('sd-' + details.id);
 
     // Wait a little time then show the story details.
-    setTimeout(showStory.bind(this, details.id), 60);
-
+    console.log("Before binding " + details.id);
+    //setTimeout(showStory.bind(this, details.id), 60);
+    console.log("After binding " + details.id);
     // Create and append the story. A visual change...
     // perhaps that should be in a requestAnimationFrame?
     // And maybe, since they're all the same, I don't
@@ -124,7 +125,7 @@ APP.Main = (function() {
       storyDetails.setAttribute('id', 'sd-' + details.id);
       storyDetails.classList.add('story-details');
       storyDetails.innerHTML = storyDetailsHtml;
-
+      console.log("Story details " + storyDetails.innerHTML);
       document.body.appendChild(storyDetails);
 
       commentsElement = storyDetails.querySelector('.js-comments');
@@ -160,12 +161,14 @@ APP.Main = (function() {
               localeData);
         });
       }
+      console.log("End of story details");
     }
-
+    console.log("End of onStoryClick");
+    showStory(details.id);
   }
 
   function showStory(id) {
-
+    console.log("In showstory with " + id);
     if (inDetails)
       return;
     inDetails = true;
@@ -255,60 +258,8 @@ APP.Main = (function() {
    * Does this really add anything? Can we do this kind
    * of work in a cheaper way?
    */
-  function colorizeAndScaleStories() {
-
-    var storyElements = document.querySelectorAll('.story');
-
-    // It does seem awfully broad to change all the
-    // colors every time!
-    var height = main.offsetHeight;
-    var mainPosition = main.getBoundingClientRect();
-    var documentPosition = document.body.getBoundingClientRect().top;
-
-    for (var s = 0; s < storyElements.length; s++) {
-
-      var story = storyElements[s];
-      var score = story.querySelector('.story__score');
-      var title = story.querySelector('.story__title');
-
-      // Base the scale on the y position of the score.     
-      var scoreRect =  score.getBoundingClientRect();
-      var scoreLocation = scoreRect.top -
-          documentPosition;
-      var scale = Math.min(1, 1 - (0.05 * ((scoreLocation - 170) / height)));
-      var opacity = Math.min(1, 1 - (0.5 * ((scoreLocation - 170) / height)));
-
-      // console.log("Before:: score.style.width: " + score.style.width + 
-      //     " score.style.height: " +score.style.height +
-      //     " score.style.lineHeight: " + score.style.lineHeight);
-      
-      
-      score.style.width = (scale * 40) + 'px';
-      //score.style.height = (scale * 40) + 'px';
-      //score.style.lineHeight = (scale * 40) + 'px';
-
-      console.log("After:: score.style.width: " + score.style.width );
-      // console.log("After:: score.style.width: " + score.style.width + 
-      //     " score.style.height: " +score.style.height +
-      //     " score.style.lineHeight: " + score.style.lineHeight);
-
-      // Now figure out how wide it is and use that to saturate it.
-      scoreLocation = score.getBoundingClientRect();
-      //scoreLocation.width = score.style.width;
-      var diff = scoreRect.width - score.style.width;
-      console.log("Score location :: " + scoreRect.width + " Diff :: " + 
-          diff);
-      var saturation = (100 * ((scoreLocation.width - 38) / 2));
-      //var saturation = (100 * ((scoreRect.width - 38) / 2));
-
-      // console.log("Before:: score.style.backgroundColor: " + score.style.backgroundColor 
-      //     + " title.style.opacity: " + title.style.opacity);
-      score.style.backgroundColor = 'hsl(42, ' + saturation + '%, 50%)';
-      title.style.opacity = opacity;
-      // console.log("After:: score.style.backgroundColor: " + score.style.backgroundColor 
-      //     + " title.style.opacity: " + title.style.opacity);
-    }
-  }
+  // function colorizeAndScaleStories() {
+  // }
 
   main.addEventListener('touchstart', function(evt) {
 
@@ -327,23 +278,28 @@ APP.Main = (function() {
     var scrollTopCapped = Math.min(70, main.scrollTop);
     var scaleString = 'scale(' + (1 - (scrollTopCapped / 300)) + ')';
 
-    colorizeAndScaleStories();
+    //function animate(){
 
-    header.style.height = (156 - scrollTopCapped) + 'px';
-    headerTitles.style.webkitTransform = scaleString;
-    headerTitles.style.transform = scaleString;
+      //colorizeAndScaleStories();
 
-    // Add a shadow to the header.
-    if (main.scrollTop > 70)
-      document.body.classList.add('raised');
-    else
-      document.body.classList.remove('raised');
+      header.style.height = (156 - scrollTopCapped) + 'px';
+      headerTitles.style.webkitTransform = scaleString;
+      headerTitles.style.transform = scaleString;
 
-    // Check if we need to load the next batch of stories.
-    var loadThreshold = (main.scrollHeight - main.offsetHeight -
-        LAZY_LOAD_THRESHOLD);
-    if (main.scrollTop > loadThreshold)
-      loadStoryBatch();
+      // Add a shadow to the header.
+      if (main.scrollTop > 70)
+        document.body.classList.add('raised');
+      else
+        document.body.classList.remove('raised');
+
+      // Check if we need to load the next batch of stories.
+      var loadThreshold = (main.scrollHeight - main.offsetHeight -
+          LAZY_LOAD_THRESHOLD);
+      if (main.scrollTop > loadThreshold)
+        loadStoryBatch();
+    //   requestAnimationFrame(animate);
+    // }
+    // requestAnimationFrame(animate);
   });
 
   function loadStoryBatch() {
@@ -374,13 +330,15 @@ APP.Main = (function() {
     }
 
     storyStart += count;
+    requestAnimationFrame(loadStoryBatch);
 
   }
-
+ 
   // Bootstrap in the stories.
   APP.Data.getTopStories(function(data) {
     stories = data;
-    loadStoryBatch();
+    //loadStoryBatch();
+    requestAnimationFrame(loadStoryBatch);
     main.classList.remove('loading');
   });
 
