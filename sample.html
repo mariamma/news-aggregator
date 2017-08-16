@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <meta name="theme-color" content="#FF6F00">
+  <style>
+  	html, body {
+	  height : 100%;
+	  width  : 100%;
+	  overflow-x: hidden;
+	}
+	.peek {
+	display: flex;
+	  height : 100%;
+	  width  : 90%;
+	  left: 100%;
+	  top: 0;
+	  position : fixed;
+	  z-index: 2;
+	  background-color : pink;
+	  transition: transform 0.3s;
+	  overflow: hidden;
+	  will-change:transform;
+	}
+	.peek.hidden{
+		transform: translateX(-90vw);
+	}
+	.peek.visible{
+		transform: translateX(0);
+	}
+  </style>
+</head>
+<body>
+	<div class="peek">Here I am</div>
+	<button onclick="myFunction()">Try visible</button>
+	<button onclick="myHidddenFunc()">Try hidden</button>
+	<script type="text/javascript">
+	var main = document.querySelector(".peek");
+	function myFunction(){
+	  	console.log("main o/p :: " + main);
+	  	main.classList.remove("hidden");
+	  	main.classList.add("visible");
+	  	// main.addEventListener("click",function(){
+	  	// 	main.classList.add("visible");
+	  	// });
+  	}
+
+  	function myHidddenFunc(){
+	  	console.log("main o/p :: " + main);
+	  	main.classList.remove("visible");
+	  	main.classList.add("hidden");
+  	}
+  </script>
+</body>
+</html>

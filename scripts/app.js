@@ -19,6 +19,10 @@ APP.Main = (function() {
   var LAZY_LOAD_THRESHOLD = 300;
   var $ = document.querySelector.bind(document);
 
+  var storyDetails = document.createElement('section');
+  storyDetails.classList.add('story-details');
+  document.body.appendChild(storyDetails);
+
   var stories = null;
   var storyStart = 0;
   var count = 100;
@@ -94,7 +98,7 @@ APP.Main = (function() {
 
   function onStoryClick(details) {
 
-    var storyDetails = $('sd-' + details.id);
+ //   var storyDetails = $('sd-' + details.id);
 
     // Wait a little time then show the story details.
     console.log("Before binding " + details.id);
@@ -105,7 +109,7 @@ APP.Main = (function() {
     // And maybe, since they're all the same, I don't
     // need to make a new element every single time? I mean,
     // it inflates the DOM and I can only see one at once.
-    if (!storyDetails) {
+    //if (!storyDetails) {
 
       if (details.url)
         details.urlobj = new URL(details.url);
@@ -121,12 +125,12 @@ APP.Main = (function() {
         by: '', text: 'Loading comment...'
       });
 
-      storyDetails = document.createElement('section');
+      
       storyDetails.setAttribute('id', 'sd-' + details.id);
-      storyDetails.classList.add('story-details');
+      // storyDetails.classList.add('story-details');
       storyDetails.innerHTML = storyDetailsHtml;
-      console.log("Story details " + storyDetails.innerHTML);
-      document.body.appendChild(storyDetails);
+      //console.log("Story details " + storyDetails.innerHTML);
+      // document.body.appendChild(storyDetails);
 
       commentsElement = storyDetails.querySelector('.js-comments');
       storyHeader = storyDetails.querySelector('.js-header');
@@ -162,96 +166,107 @@ APP.Main = (function() {
         });
       }
       console.log("End of story details");
-    }
+    //}
     console.log("End of onStoryClick");
     showStory(details.id);
   }
 
   function showStory(id) {
     console.log("In showstory with " + id);
-    if (inDetails)
-      return;
-    inDetails = true;
-    var storyDetails = $('#sd-' + id);
-    var left = null;
+    
+    console.log("Story details :: " + storyDetails.innerHTML);
+    storyDetails.classList.add("visible");
+    storyDetails.classList.remove("hidden");
+    // console.log("In showstory with " + id);
+    // if (inDetails)
+    //   return;
+    // inDetails = true;
+    // var storyDetails = $('#sd-' + id);
+    // var left = null;
 
-    if (!storyDetails)
-      return;
-    document.body.classList.add('details-active');
-    storyDetails.style.opacity = 1;
-    var storyDetailsPosition = storyDetails.getBoundingClientRect();
+    // if (!storyDetails)
+    //   return;
+    // document.body.classList.add('details-active');
+    // storyDetails.style.opacity = 1;
+    // var storyDetailsPosition = storyDetails.getBoundingClientRect();
 
-    function animate () {
-      // Find out where it currently is.
-      //var storyDetailsPosition = storyDetails.getBoundingClientRect();
-      // Set the left value if we don't have one already.
-      if (left === null)
-        left = storyDetailsPosition.left;
+    // function animate () {
+    //   // Find out where it currently is.
+    //   //var storyDetailsPosition = storyDetails.getBoundingClientRect();
+    //   // Set the left value if we don't have one already.
+    //   if (left === null)
+    //     left = storyDetailsPosition.left;
 
-      // Now figure out where it needs to go.
-      left += (0 - storyDetailsPosition.left) * 0.1;
+    //   // Now figure out where it needs to go.
+    //   left += (0 - storyDetailsPosition.left) * 0.1;
 
-      // Set up the next bit of the animation if there is more to do.
-      if (Math.abs(left) > 0.5)
-        requestAnimationFrame(animate);
-        //setTimeout(animate, 4);
-      else
-        left = 0;
-      // And update the styles. Wait, is this a read-write cycle?
-      // I hope I don't trigger a forced synchronous layout!
-      storyDetails.style.left = left + 'px';
-    }
-    // We want slick, right, so let's do a setTimeout
-    // every few milliseconds. That's going to keep
-    // it all tight. Or maybe we're doing visual changes
-    // and they should be in a requestAnimationFrame
-    //setTimeout(animate, 4);
-    requestAnimationFrame(animate);
+    //   // Set up the next bit of the animation if there is more to do.
+    //   if (Math.abs(left) > 0.5)
+    //     requestAnimationFrame(animate);
+    //     //setTimeout(animate, 4);
+    //   else
+    //     left = 0;
+    //   // And update the styles. Wait, is this a read-write cycle?
+    //   // I hope I don't trigger a forced synchronous layout!
+    //   storyDetails.style.left = left + 'px';
+    // }
+    // // We want slick, right, so let's do a setTimeout
+    // // every few milliseconds. That's going to keep
+    // // it all tight. Or maybe we're doing visual changes
+    // // and they should be in a requestAnimationFrame
+    // //setTimeout(animate, 4);
+    // requestAnimationFrame(animate);
   }
 
   function hideStory(id) {
+    // console.log("In showstory with " + id);
+    // var storyDetails = $('#sd-' + id);
+    // document.body.classList.add('details-active');
+    // var storyDetails = document.querySelector(".story-details");
+    storyDetails.classList.remove("visible");
+    storyDetails.classList.add("hidden");
 
-    if (!inDetails)
-      return;
+    // if (!inDetails)
+    //   return;
 
-    var storyDetails = $('#sd-' + id);
-    var left = 0;
+    // var storyDetails = $('#sd-' + id);
+    // var left = 0;
 
-    document.body.classList.remove('details-active');
-    storyDetails.style.opacity = 0;
+    // document.body.classList.remove('details-active');
+    // storyDetails.style.opacity = 0;
 
-     var mainPosition = main.getBoundingClientRect();
-     var storyDetailsPosition = storyDetails.getBoundingClientRect();
-     var target = mainPosition.width + 100;
+    //  var mainPosition = main.getBoundingClientRect();
+    //  var storyDetailsPosition = storyDetails.getBoundingClientRect();
+    //  var target = mainPosition.width + 100;
 
 
-    function animate () {
+    // function animate () {
 
-      // Find out where it currently is.
+    //   // Find out where it currently is.
      
-      // Now figure out where it needs to go.
-      left += (target - storyDetailsPosition.left) * 0.1;
+    //   // Now figure out where it needs to go.
+    //   left += (target - storyDetailsPosition.left) * 0.1;
 
-      // Set up the next bit of the animation if there is more to do.
-      if (Math.abs(left - target) > 0.5) {
-        requestAnimationFrame(animate);
-        //setTimeout(animate, 4);
-      } else {
-        left = target;
-        inDetails = false;
-      }
+    //   // Set up the next bit of the animation if there is more to do.
+    //   if (Math.abs(left - target) > 0.5) {
+    //     requestAnimationFrame(animate);
+    //     //setTimeout(animate, 4);
+    //   } else {
+    //     left = target;
+    //     inDetails = false;
+    //   }
 
-      // And update the styles. Wait, is this a read-write cycle?
-      // I hope I don't trigger a forced synchronous layout!
-      storyDetails.style.left = left + 'px';
-    }
+    //   // And update the styles. Wait, is this a read-write cycle?
+    //   // I hope I don't trigger a forced synchronous layout!
+    //   storyDetails.style.left = left + 'px';
+    // }
 
-    // We want slick, right, so let's do a setTimeout
-    // every few milliseconds. That's going to keep
-    // it all tight. Or maybe we're doing visual changes
-    // and they should be in a requestAnimationFrame
-    //setTimeout(animate, 4);
-    requestAnimationFrame(animate);
+    // // We want slick, right, so let's do a setTimeout
+    // // every few milliseconds. That's going to keep
+    // // it all tight. Or maybe we're doing visual changes
+    // // and they should be in a requestAnimationFrame
+    // //setTimeout(animate, 4);
+    // requestAnimationFrame(animate);
   }
 
   /**
